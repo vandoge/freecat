@@ -109,7 +109,7 @@ requirements:
     - matplotlib-base
     - noqt5
     - numpy>=1.26,<2
-    - occt>=7.8,<7.9
+    - occt>=7.9.3,<7.10
     - pcl
     - pivy
     - ply
@@ -118,7 +118,6 @@ requirements:
     - python>=3.11,<3.12
     - qt6-main>=6.10.1,<6.11
     - six
-    - smesh
     - vtk
     - xerces-c
     - yaml-cpp
@@ -154,7 +153,7 @@ requirements:
     - nine
     - noqt5
     - numpy>=1.26,<2
-    - occt>=7.8,<7.9
+    - occt>=7.9.3,<7.10
     - olefile
     - opencamlib
     - opencv
