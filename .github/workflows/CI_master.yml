@@ -46,25 +46,12 @@ jobs:
     with:
       artifactBasename: Prepare-${{ github.run_id }}
 
-  Pixi:
-    needs: [Prepare]
-    uses: ./.github/workflows/sub_buildPixi.yml
-    with:
-      artifactBasename: Pixi-${{ github.run_id }}
-
   Ubuntu:
     needs: [Prepare]
     if: "!startsWith(github.head_ref, 'refs/heads/backport-')"
     uses: ./.github/workflows/sub_buildUbuntu.yml
     with:
       artifactBasename: Ubuntu-${{ github.run_id }}
-
-  Windows:
-    needs: [Prepare]
-    if: "!startsWith(github.head_ref, 'refs/heads/backport-')"
-    uses: ./.github/workflows/sub_buildWindows.yml
-    with:
-      artifactBasename: Windows-${{ github.run_id }}
 
   Lint:
     needs: [Prepare]
@@ -82,9 +69,7 @@ jobs:
   WrapUp:
     needs: [
         Prepare,
-        Pixi,
         Ubuntu,
-        Windows,
         Lint
       ]
     if: always()
