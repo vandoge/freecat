@@ -118,7 +118,6 @@ requirements:
     - python>=3.11,<3.12
     - qt6-main>=6.10.1,<6.11
     - six
-    - smesh
     - vtk
     - xerces-c
     - yaml-cpp
