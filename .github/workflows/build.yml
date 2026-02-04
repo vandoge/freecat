@@ -122,6 +122,7 @@ jobs:
           builddir: ${{ env.builddir }}
           logFile: ${{ env.logdir }}Cmake.log
           errorFile: ${{ env.logdir }}CmakeErrors.log
+          reportFile: ${{ env.logdir }}Report.md
 
       - name: CMake Build
         uses: ./.github/workflows/actions/linux/build
@@ -129,6 +130,7 @@ jobs:
           builddir: ${{ env.builddir }}
           logFile: ${{ env.logdir }}Build.log
           errorFile: ${{ env.logdir }}BuildErrors.log
+          reportFile: ${{ env.logdir }}Report.md
 
       - name: Print ccache statistics after Build
         if: always()
@@ -141,6 +143,7 @@ jobs:
         with:
           reportdir: /tmp/report/
           builddir: ${{ env.builddir }}
+          reportFile: ${{ env.logdir }}Report.md
 
       - name: CMake Install
         uses: ./.github/workflows/actions/linux/install
@@ -148,6 +151,7 @@ jobs:
           builddir: ${{ env.builddir }}
           logFile: ${{ env.logdir }}Install.log
           errorFile: ${{ env.logdir }}InstallErrors.log
+          reportFile: ${{ env.logdir }}Report.md
 
       - name: FreeCAD CLI tests on install
         timeout-minutes: 10
@@ -156,6 +160,7 @@ jobs:
           testDescription: "CLI tests on install"
           testCommand: FreeCADCmd -t 0
           logFile: ${{ env.logdir }}TestCLIInstall.log
+          reportFile: ${{ env.logdir }}Report.md
 
       - name: FreeCAD GUI tests on install
         timeout-minutes: 15
@@ -164,6 +169,7 @@ jobs:
           testDescription: "GUI tests on install"
           testCommand: xvfb-run python3 ./.github/scripts/run_gui_tests.py "FreeCAD"
           logFile: ${{ env.logdir }}TestGUIInstall.log
+          reportFile: ${{ env.logdir }}Report.md
 
       - name: Save Compiler Cache
         id: cache-save
