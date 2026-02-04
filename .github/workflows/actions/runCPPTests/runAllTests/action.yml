@@ -40,6 +40,9 @@ inputs:
 runs:
   using: "composite"
   steps:
+      - name: Ensure report directory exists
+        shell: bash -l {0}
+        run: mkdir -p "${{ inputs.reportdir }}"
       - name: C++ Assembly tests
         id: assembly
         uses: ./.github/workflows/actions/runCPPTests/runSingleTest
