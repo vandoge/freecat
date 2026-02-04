@@ -23,7 +23,22 @@
 # ***************************************************************************
 
 # Script to update pixi lock files
-# This script updates pixi.lock files when they are out of sync with pixi.toml
+# 
+# This script ensures that pixi.lock files are synchronized with their
+# corresponding pixi.toml manifest files. When the manifest changes
+# (e.g., adding/updating dependencies), the lock file needs to be
+# regenerated to reflect these changes.
+#
+# Usage:
+#   .github/scripts/update_pixi_lock.sh
+#
+# The script will:
+#   1. Check the root pixi.toml and update pixi.lock if needed
+#   2. Check package/rattler-build/pixi.toml and update its pixi.lock if needed
+#   3. Exit with an error if pixi is not installed or if the update fails
+#
+# Note: This script is automatically run in CI workflows when pixi commands
+# are executed to ensure lock files are always up-to-date.
 
 set -e
 
