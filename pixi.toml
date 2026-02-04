@@ -25,7 +25,7 @@ freetype = "*"
 git = "*"
 graphviz = "*"
 hdf5 = "*"
-ifcopenshell = "*"
+# ifcopenshell = "*"  # Temporarily commented out: incompatible with occt 7.9.3 (requires occt 7.8.1)
 lark = "*"
 libboost-devel = "*"
 lxml = "*"
@@ -48,13 +48,13 @@ pybind11 = "*"
 pycollada = "*"
 pyside6 = "*"
 python = ">=3.11,<3.12"
-pythonocc-core = "*"
+# pythonocc-core = "*"  # Temporarily commented out: incompatible with occt 7.9.3 (requires occt <7.5.0)
 pyyaml = "*"
 qt6-main = ">=6.8,<6.9"
 requests = "*"
 scipy = "*"
 six = "*"
-smesh = "*"
+# smesh = "*"  # Temporarily commented out: incompatible with occt 7.9.3 (requires occt <7.9.0)
 swig = "*"
 sympy = "*"
 tbb-devel = ">=2022,<2023"
@@ -101,7 +101,7 @@ xorg-x11-server-xvfb-cos7-x86_64 = "*"
 xorg-xproto = "*"
 
 [pypi-dependencies]
-freecad-stubs = "*"
+# freecad-stubs = "*"  # Commented out temporarily due to conda-pypi mapping network access issues
 
 ## Qt 6 Configuration Presets
 [target.linux-64.tasks]
