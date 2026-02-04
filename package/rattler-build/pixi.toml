@@ -6,6 +6,9 @@ channels = [
 platforms = ["linux-64"]
 preview = ["pixi-build"]
 
+[dependencies]
+conda-build = "*"
+
 [package]
 name = "freecad"
 version = "1.1.0dev"
@@ -14,7 +17,7 @@ repository = "https://github.com/FreeCAD/FreeCAD"
 description = "FreeCAD"
 
 [package.build]
-backend = { name = "pixi-build-rattler-build", version = "*" }
+backend = { name = "conda-build", version = "*" }
 
 [feature.freecad.dependencies]
 freecad = { path = "." }
