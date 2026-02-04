@@ -3,7 +3,7 @@ channels = [
     "https://prefix.dev/pixi-build-backends",
     "https://prefix.dev/conda-forge",
 ]
-platforms = ["linux-64", "linux-aarch64", "osx-64", "osx-arm64", "win-64"]
+platforms = ["linux-64"]
 preview = ["pixi-build"]
 
 [package]
@@ -29,32 +29,6 @@ create_bundle = 'bash -c "cd $(bash scripts/get_os.bash) && bash create_bundle.s
 [feature.package.target.linux-64.dependencies]
 coreutils = "*"
 xcb-util-cursor = "==0.1.5"  ## hack to address https://github.com/FreeCAD/FreeCAD/issues/26726
-
-## Linux (aarch64)
-[feature.package.target.linux-aarch64.dependencies]
-coreutils = "*"
-xcb-util-cursor = "==0.1.5"  ## hack to address https://github.com/FreeCAD/FreeCAD/issues/26726
-
-## macOS (Intel)
-[feature.package.target.osx-64.dependencies]
-coreutils = "*"
-dmgbuild = "*"
-pyobjc-framework-Quartz = "*"
-sed = "*"
-
-## macOS (Apple Silicon)
-[feature.package.target.osx-arm64.dependencies]
-coreutils = "*"
-dmgbuild = "*"
-pyobjc-framework-Quartz = "*"
-sed = "*"
-
-## Windows dependencies (x86-64)
-[feature.package.target.win-64.dependencies]
-git = "*"
-nsis = { version = "*", build = "*_log*" }
-7zip = "*"
-vs2022_win-64 = "*"
 
 [environments]
 default = ["freecad"]

@@ -4,7 +4,7 @@ version = "1.0.0"
 description = "pixi instructions for FreeCAD"
 authors = ["looooo <sppedflyer@gmail.com>"]
 channels = ["conda-forge"]
-platforms = [ "linux-64", "linux-aarch64", "osx-64", "osx-arm64", "win-64" ]
+platforms = [ "linux-64" ]
 requires-pixi = ">=0.48"
 
 [dependencies]
@@ -100,57 +100,6 @@ xorg-x11-server-common-cos7-x86_64 = "*"
 xorg-x11-server-xvfb-cos7-x86_64 = "*"
 xorg-xproto = "*"
 
-## Linux Dependencies (aarch64)
-[target.linux-aarch64.dependencies]
-clang = "*"
-clangxx = "*"
-kernel-headers_linux-aarch64 = "*"
-libdrm-cos7-aarch64 = "*"
-libglvnd-cos7-aarch64 = "*"
-libglvnd-glx-cos7-aarch64 = "*"
-libselinux-cos7-aarch64 = "*"
-libsepol-cos7-aarch64 = "*"
-libspnav = "*"
-libx11-common-cos7-aarch64 = "*"
-libx11-cos7-aarch64 = "*"
-libxau-cos7-aarch64 = "*"
-libxcb-cos7-aarch64 = "*"
-libxdamage-cos7-aarch64 = "*"
-libxext-cos7-aarch64 = "*"
-libxfixes-cos7-aarch64 = "*"
-libxi-cos7-aarch64 = "*"
-libxi-devel-cos7-aarch64 = "*"
-libxxf86vm-cos7-aarch64 = "*"
-llvm-openmp = "*"
-mesa-dri-drivers-cos7-aarch64 = "*"
-mesa-khr-devel-cos7-aarch64 = "*"
-mesa-libegl-cos7-aarch64 = "*"
-mesa-libegl-devel-cos7-aarch64 = "*"
-mesa-libgbm-cos7-aarch64 = "*"
-mesa-libgl-cos7-aarch64 = "*"
-mesa-libgl-devel-cos7-aarch64 = "*"
-mesa-libglapi-cos7-aarch64 = "*"
-mold = "*"
-pixman-cos7-aarch64 = "*"
-qt6-wayland = ">=6.8,<6.9"
-sed = "*"
-sysroot_linux-aarch64 = "*"
-xcb-util-cursor = "==0.1.5"  ## hack to address https://github.com/FreeCAD/FreeCAD/issues/26726
-xorg-x11-server-common-cos7-aarch64 = "*"
-xorg-x11-server-xvfb-cos7-aarch64 = "*"
-xorg-xproto = "*"
-
-## macOS Dependencies (Intel)
-[target.osx-64.dependencies]
-sed = "*"
-
-## macOS Dependencies (Apple Silicon)
-[target.osx-arm64.dependencies]
-sed = "*"
-
-[target.win-64.dependencies]
-pthreads-win32 = "*"
-
 [pypi-dependencies]
 freecad-stubs = "*"
 
@@ -158,24 +107,6 @@ freecad-stubs = "*"
 [target.linux-64.tasks]
 configure-debug = { cmd = [ "cmake", "--preset", "conda-linux-debug" ], depends-on = ["initialize"], env={ CFLAGS="", CXXFLAGS="", DEBUG_CFLAGS="", DEBUG_CXXFLAGS="" }}
 configure-release = { cmd = [ "cmake", "--preset", "conda-linux-release" ], depends-on = ["initialize"], env={ CFLAGS="", CXXFLAGS="", DEBUG_CFLAGS="", DEBUG_CXXFLAGS="" }}
-
-[target.linux-aarch64.tasks]
-configure-debug = { cmd = [ "cmake", "--preset", "conda-linux-debug" ], depends-on= ["initialize"], env={ CFLAGS="", CXXFLAGS="", DEBUG_CFLAGS="", DEBUG_CXXFLAGS="" }}
-configure-release = { cmd = [ "cmake", "--preset", "conda-linux-release" ], depends-on= ["initialize"], env={ CFLAGS="", CXXFLAGS="", DEBUG_CFLAGS="", DEBUG_CXXFLAGS="" }}
-
-[target.osx-64.tasks]
-configure-debug = { cmd = [ "cmake", "--preset", "conda-macos-debug" ], depends-on = ["initialize"], env={ CFLAGS="", CXXFLAGS="", DEBUG_CFLAGS="", DEBUG_CXXFLAGS="" }}
-configure-release = { cmd = [ "cmake", "--preset", "conda-macos-release" ], depends-on = ["initialize"], env={ CFLAGS="", CXXFLAGS="", DEBUG_CFLAGS="", DEBUG_CXXFLAGS="" }}
-
-[target.osx-arm64.tasks]
-configure-debug = { cmd = [ "cmake", "--preset", "conda-macos-debug" ], depends-on = ["initialize"], env={ CFLAGS="", CXXFLAGS="", DEBUG_CFLAGS="", DEBUG_CXXFLAGS="" }}
-configure-release = { cmd = [ "cmake", "--preset", "conda-macos-release" ], depends-on = ["initialize"], env={ CFLAGS="", CXXFLAGS="", DEBUG_CFLAGS="", DEBUG_CXXFLAGS="" }}
-
-[target.win-64.tasks]
-configure-debug = { cmd = [ "cmake", "--preset", "conda-windows-debug", "-DCMAKE_GENERATOR_PLATFORM=", "-DCMAKE_GENERATOR_TOOLSET=" ], depends-on = ["initialize"], env={ CFLAGS="", CXXFLAGS="", DEBUG_CFLAGS="", DEBUG_CXXFLAGS="" }}
-configure-release = { cmd = [ "cmake", "--preset", "conda-windows-release", "-DCMAKE_GENERATOR_PLATFORM=", "-DCMAKE_GENERATOR_TOOLSET=" ], depends-on = ["initialize"], env={ CFLAGS="", CXXFLAGS="", DEBUG_CFLAGS="", DEBUG_CXXFLAGS="" }}
-freecad-debug = { cmd = [ ".pixi/envs/default/Library/bin/FreeCAD.exe" ], depends-on = ["install-debug"]}
-freecad-release = { cmd = [ ".pixi/envs/default/Library/bin/FreeCAD.exe" ], depends-on = ["install-release"]}
 
 [tasks]
 initialize = { cmd = ["git", "submodule", "update", "--init", "--recursive"]}
