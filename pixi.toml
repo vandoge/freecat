@@ -34,7 +34,7 @@ nine = "*"
 ninja = "*"
 noqt5 = "*"
 numpy = ">=1.26,<1.27"
-occt = "==7.9.3"
+occt = "==7.8.1"  # Using 7.8.1 for compatibility with smesh and pythonocc-core
 opencamlib = "*"
 opencv = "*"
 openssl = "*"
@@ -101,7 +101,7 @@ xorg-x11-server-xvfb-cos7-x86_64 = "*"
 xorg-xproto = "*"
 
 [pypi-dependencies]
-freecad-stubs = "*"
+# freecad-stubs = "*"  # Commented out temporarily due to conda-pypi mapping network access issues
 
 ## Qt 6 Configuration Presets
 [target.linux-64.tasks]
