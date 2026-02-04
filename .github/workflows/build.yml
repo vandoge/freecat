@@ -174,7 +174,7 @@ jobs:
       - name: Setup pixi for AppImage
         uses: prefix-dev/setup-pixi@a0af7a228712d6121d37aba47adf55c1332c9c2e # v0.9.4
         with:
-          pixi-version: v0.40.3
+          pixi-version: v0.48.0
           cache: true
           manifest-path: package/rattler-build/pixi.toml
 
@@ -182,7 +182,7 @@ jobs:
         working-directory: package/rattler-build
         run: |
           # Try to install with locked flag first, if it fails, regenerate the lock file
-          pixi install --locked || pixi install
+          pixi install --locked || pixi lock
         continue-on-error: false
 
       - name: Build FreeCAD package for AppImage
