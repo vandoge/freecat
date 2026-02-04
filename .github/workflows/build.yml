@@ -178,6 +178,13 @@ jobs:
           cache: true
           manifest-path: package/rattler-build/pixi.toml
 
+      - name: Update pixi lock file if out of sync
+        working-directory: package/rattler-build
+        run: |
+          # Try to install with locked flag first, if it fails, regenerate the lock file
+          pixi install --locked || pixi install
+        continue-on-error: false
+
       - name: Build FreeCAD package for AppImage
         working-directory: package/rattler-build
         run: |
