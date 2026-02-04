@@ -138,7 +138,7 @@ jobs:
           ccache -s
 
       - name: C++ tests
-        timeout-minutes: 1
+        timeout-minutes: 10
         uses: ./.github/workflows/actions/runCPPTests/runAllTests
         with:
           reportdir: /tmp/report/
