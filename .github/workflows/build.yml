@@ -49,6 +49,7 @@ jobs:
       CCACHE_NOHASHDIR: true
       CCACHE_NOINODECACHE: true
       CCACHE_SLOPPINESS: "include_file_ctime,include_file_mtime,pch_defines,time_macros"
+      BUILD_APPIMAGE: "false"
       CC: /usr/bin/gcc
       CXX: /usr/bin/g++
       builddir: ${{ github.workspace }}/build/release/
@@ -172,6 +173,7 @@ jobs:
           reportFile: ${{ env.logdir }}Report.md
 
       - name: Setup pixi for AppImage
+        if: ${{ env.BUILD_APPIMAGE == 'true' }}
         uses: prefix-dev/setup-pixi@a0af7a228712d6121d37aba47adf55c1332c9c2e # v0.9.4
         with:
           pixi-version: v0.48.0
@@ -179,6 +181,7 @@ jobs:
           manifest-path: package/rattler-build/pixi.toml
 
       - name: Update pixi lock file if out of sync
+        if: ${{ env.BUILD_APPIMAGE == 'true' }}
         working-directory: package/rattler-build
         run: |
           # Try to install with locked flag first, if it fails, regenerate the lock file
@@ -186,11 +189,13 @@ jobs:
         continue-on-error: false
 
       - name: Build FreeCAD package for AppImage
+        if: ${{ env.BUILD_APPIMAGE == 'true' }}
         working-directory: package/rattler-build
         run: |
           pixi run -e default --manifest-path pixi.toml pixi-build build --no-build-id
 
       - name: Create AppImage bundle
+        if: ${{ env.BUILD_APPIMAGE == 'true' }}
         working-directory: package/rattler-build
         env:
           BUILD_TAG: ${{ github.ref_name }}-${{ github.sha }}
@@ -199,6 +204,7 @@ jobs:
           pixi run -e package --manifest-path pixi.toml create_bundle
 
       - name: Upload AppImage
+        if: ${{ env.BUILD_APPIMAGE == 'true' }}
         uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
         with:
           name: FreeCAD-AppImage
