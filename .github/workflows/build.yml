@@ -171,6 +171,32 @@ jobs:
           logFile: ${{ env.logdir }}TestGUIInstall.log
           reportFile: ${{ env.logdir }}Report.md
 
+      - name: Setup pixi for AppImage
+        uses: prefix-dev/setup-pixi@ba3bb36eb2066252b2363392b7739741bb777659 # v0.8.1
+        with:
+          pixi-version: v0.40.3
+          cache: true
+          manifest-path: package/rattler-build/pixi.toml
+
+      - name: Build FreeCAD package for AppImage
+        working-directory: package/rattler-build
+        run: |
+          pixi run -e default --manifest-path pixi.toml pixi-build build --no-build-id
+
+      - name: Create AppImage bundle
+        working-directory: package/rattler-build
+        env:
+          BUILD_TAG: ${{ github.ref_name }}-${{ github.sha }}
+          UPLOAD_RELEASE: "false"
+        run: |
+          pixi run -e package --manifest-path pixi.toml create_bundle
+
+      - name: Upload AppImage
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+        with:
+          name: FreeCAD-AppImage
+          path: package/rattler-build/linux/FreeCAD*.AppImage*
+
       - name: Save Compiler Cache
         id: cache-save
         if: always()
