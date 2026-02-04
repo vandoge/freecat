@@ -172,7 +172,7 @@ jobs:
           reportFile: ${{ env.logdir }}Report.md
 
       - name: Setup pixi for AppImage
-        uses: prefix-dev/setup-pixi@ba3bb36eb2066252b2363392b7739741bb777659 # v0.8.1
+        uses: prefix-dev/setup-pixi@a0af7a228712d6121d37aba47adf55c1332c9c2e # v0.9.4
         with:
           pixi-version: v0.40.3
           cache: true
