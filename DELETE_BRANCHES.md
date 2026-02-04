@@ -4,6 +4,8 @@ This document describes how to delete all branches except the main branch from t
 
 ## Current Branches to be Deleted
 
+**Note:** This list reflects branches at the time of PR creation. Some branches may have already been deleted by the time you run this tool.
+
 The following branches will be deleted:
 1. copilot/build-appimage-occt-7-9-3
 2. copilot/check-commit-status

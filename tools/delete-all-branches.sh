@@ -23,13 +23,13 @@ git fetch --all
 # Get all remote branches except main
 branches=$(git ls-remote --heads origin | grep -v 'refs/heads/main$' | awk '{print $2}' | sed 's|refs/heads/||')
 
-# Count branches
-branch_count=$(echo "$branches" | wc -l)
-
 if [ -z "$branches" ]; then
     echo "No branches to delete. Only main branch exists."
     exit 0
 fi
+
+# Count branches
+branch_count=$(echo "$branches" | grep -c .)
 
 echo "Found $branch_count branches to delete:"
 echo "$branches"
