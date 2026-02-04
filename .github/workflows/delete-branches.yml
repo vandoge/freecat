@@ -1,0 +1,71 @@
+---
+name: Delete All Branches Except Main
+
+'on':
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type "DELETE ALL BRANCHES" to confirm'
+        required: true
+        type: string
+
+jobs:
+  delete-branches:
+    runs-on: ubuntu-latest
+    if: github.event.inputs.confirm == 'DELETE ALL BRANCHES'
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch all branches
+        run: |
+          git fetch --all
+          git branch -r
+
+      - name: Delete all branches except main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Get all remote branches except main
+          branches=$(git ls-remote --heads origin | \
+            grep -v 'refs/heads/main$' | \
+            awk '{print $2}' | \
+            sed 's|refs/heads/||')
+
+          echo "Branches to be deleted:"
+          echo "$branches"
+
+          # Delete each branch
+          for branch in $branches; do
+            echo "Deleting branch: $branch"
+            git push origin --delete "$branch" || \
+              echo "Failed to delete $branch"
+          done
+
+          echo "All branches except main have been deleted."
+
+      - name: Summary
+        run: |
+          echo "## Deleted Branches" >> $GITHUB_STEP_SUMMARY
+          git ls-remote --heads origin | \
+            grep -v 'refs/heads/main$' | \
+            awk '{print $2}' | \
+            sed 's|refs/heads/||' | \
+            while read branch; do
+              echo "- ~~$branch~~" >> $GITHUB_STEP_SUMMARY
+            done || \
+            echo "All branches deleted successfully!" >> \
+              $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Remaining branches:" >> $GITHUB_STEP_SUMMARY
+          git ls-remote --heads origin | \
+            awk '{print $2}' | \
+            sed 's|refs/heads/||' | \
+            while read branch; do
+              echo "- $branch" >> $GITHUB_STEP_SUMMARY
+            done
