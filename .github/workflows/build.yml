@@ -21,36 +21,25 @@
 # *                                                                         *
 # ***************************************************************************
 
-# This is a build and test workflow for CI of FreeCAD.
-# This workflow aims at building and testing FreeCAD on Ubuntu 24.04 using GCC.
+# Simplified workflow for building FreeCAD on the main branch with OCCT 7.9.3
 
-name: Build Ubuntu 24.04
+name: Build Main Branch
 
 on:
-  workflow_call:
-    inputs:
-      artifactBasename:
-        type: string
-        required: true
-      testOnBuildDir:
-        default: false
-        type: boolean
-        required: false
-      allowedToFail:
-        default: false
-        type: boolean
-        required: false
-    outputs:
-      reportFile:
-        value: ${{ jobs.Build.outputs.reportFile }}
+  push:
+    branches:
+      - main
+  workflow_dispatch: ~
+
+concurrency:
+  group: FC-Build-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
 
 jobs:
-
   Build:
     runs-on: ubuntu-24.04
-    continue-on-error: ${{ inputs.allowedToFail }}
     env:
-      CCACHE_COMPILERCHECK: "%compiler% -dumpfullversion -dumpversion" # default:mtime
+      CCACHE_COMPILERCHECK: "%compiler% -dumpfullversion -dumpversion"
       CCACHE_COMPRESS: true
       CCACHE_COMPRESSLEVEL: 5
       CCACHE_CONFIGPATH: ${{ github.workspace }}/ccache/config
@@ -62,18 +51,12 @@ jobs:
       CCACHE_SLOPPINESS: "include_file_ctime,include_file_mtime,pch_defines,time_macros"
       CC: /usr/bin/gcc
       CXX: /usr/bin/g++
-      #CC: /usr/bin/clang
-      #CXX: /usr/bin/clang++
       builddir: ${{ github.workspace }}/build/release/
       config: release
       logdir: /tmp/logs/
-      reportdir: /tmp/report/
-      reportfilename: ${{ inputs.artifactBasename }}-report.md
     defaults:
       run:
         shell: bash
-    outputs:
-      reportFile: ${{ steps.Init.outputs.reportFile }}
 
     steps:
       - name: Harden the runner (Audit all outbound calls)
@@ -96,15 +79,12 @@ jobs:
           python3 -m pip install --upgrade pip
           python3 -m pip install ifcopenshell==0.8.2 --break-system-packages
 
-      - name: Make needed directories, files and initializations
-        id: Init
+      - name: Make needed directories
         run: |
           mkdir -p ${{ env.CCACHE_DIR }}
           mkdir -p ${{ env.CCACHE_CONFIGPATH }}
           mkdir -p ${{ env.builddir }}
           mkdir -p ${{ env.logdir }}
-          mkdir -p ${{ env.reportdir }}
-          echo "reportFile=${{ env.reportfilename }}" >> $GITHUB_OUTPUT
 
       - name: Generate cache key
         id: genCacheKey
@@ -124,7 +104,7 @@ jobs:
             FC-${{ steps.genCacheKey.outputs.cacheKey }}-${{ github.ref }}-
             FC-${{ steps.genCacheKey.outputs.cacheKey }}-
 
-      - name: Print CCache statistics before build, reset stats and print config
+      - name: Print CCache statistics before build
         run: |
           ccache -s
           ccache -z
@@ -142,7 +122,6 @@ jobs:
           builddir: ${{ env.builddir }}
           logFile: ${{ env.logdir }}Cmake.log
           errorFile: ${{ env.logdir }}CmakeErrors.log
-          reportFile: ${{env.reportdir}}${{ env.reportfilename }}
 
       - name: CMake Build
         uses: ./.github/workflows/actions/linux/build
@@ -150,41 +129,18 @@ jobs:
           builddir: ${{ env.builddir }}
           logFile: ${{ env.logdir }}Build.log
           errorFile: ${{ env.logdir }}BuildErrors.log
-          reportFile: ${{env.reportdir}}${{ env.reportfilename }}
 
       - name: Print ccache statistics after Build
         if: always()
         run: |
           ccache -s
 
-      - name: FreeCAD CLI tests on build dir
-        if: inputs.testOnBuildDir
-        timeout-minutes: 10
-        uses: ./.github/workflows/actions/runPythonTests
-        with:
-          testDescription: "CLI tests on build dir"
-          testCommand: ${{ env.builddir }}/bin/FreeCADCmd -t 0
-          logFile: ${{ env.logdir }}TestCLIBuild.log
-          reportFile: ${{env.reportdir}}${{ env.reportfilename }}
-
-      - name: FreeCAD GUI tests on build dir
-        if: inputs.testOnBuildDir
-        timeout-minutes: 15
-        uses: ./.github/workflows/actions/runPythonTests
-        with:
-          testDescription: "GUI tests on build dir"
-          # Use Python wrapper to run only GUI-registered tests with the built FreeCAD executable
-          testCommand: xvfb-run python3 ./.github/scripts/run_gui_tests.py "${{ env.builddir }}"
-          logFile: ${{ env.logdir }}TestGUIBuild.log
-          reportFile: ${{env.reportdir}}${{ env.reportfilename }}
-
       - name: C++ tests
         timeout-minutes: 1
         uses: ./.github/workflows/actions/runCPPTests/runAllTests
         with:
-          reportdir: ${{ env.reportdir }}
+          reportdir: /tmp/report/
           builddir: ${{ env.builddir }}
-          reportFile: ${{ env.reportdir }}${{ env.reportfilename }}
 
       - name: CMake Install
         uses: ./.github/workflows/actions/linux/install
@@ -192,7 +148,6 @@ jobs:
           builddir: ${{ env.builddir }}
           logFile: ${{ env.logdir }}Install.log
           errorFile: ${{ env.logdir }}InstallErrors.log
-          reportFile: ${{env.reportdir}}${{ env.reportfilename }}
 
       - name: FreeCAD CLI tests on install
         timeout-minutes: 10
@@ -201,17 +156,14 @@ jobs:
           testDescription: "CLI tests on install"
           testCommand: FreeCADCmd -t 0
           logFile: ${{ env.logdir }}TestCLIInstall.log
-          reportFile: ${{env.reportdir}}${{ env.reportfilename }}
 
       - name: FreeCAD GUI tests on install
         timeout-minutes: 15
         uses: ./.github/workflows/actions/runPythonTests
         with:
           testDescription: "GUI tests on install"
-          # Use Python wrapper to run only GUI-registered tests using the installed FreeCAD
           testCommand: xvfb-run python3 ./.github/scripts/run_gui_tests.py "FreeCAD"
           logFile: ${{ env.logdir }}TestGUIInstall.log
-          reportFile: ${{env.reportdir}}${{ env.reportfilename }}
 
       - name: Save Compiler Cache
         id: cache-save
@@ -225,15 +177,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
         with:
-          name: ${{ inputs.artifactBasename }}-Logs
+          name: Build-Logs
           path: |
             ${{ env.logdir }}
             /var/crash/*FreeCAD*
-
-      - name: Upload report
-        if: always()
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
-        with:
-          name: ${{ env.reportfilename }}
-          path: |
-            ${{env.reportdir}}${{ env.reportfilename }}
