@@ -5,6 +5,7 @@ channels = [
 ]
 platforms = ["linux-64"]
 preview = ["pixi-build"]
+requires-pixi = ">=0.48"
 
 [dependencies]
 conda-build = "*"
