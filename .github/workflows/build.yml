@@ -49,7 +49,7 @@ jobs:
       CCACHE_NOHASHDIR: true
       CCACHE_NOINODECACHE: true
       CCACHE_SLOPPINESS: "include_file_ctime,include_file_mtime,pch_defines,time_macros"
-      BUILD_APPIMAGE: "true"
+      BUILD_APPIMAGE: "false"
       CC: /usr/bin/gcc
       CXX: /usr/bin/g++
       builddir: ${{ github.workspace }}/build/release/
@@ -217,6 +217,14 @@ jobs:
         with:
           path: ${{ env.CCACHE_DIR }}
           key: FC-${{ steps.genCacheKey.outputs.cacheKey }}-${{ github.ref }}-${{ github.run_id }}
+
+      - name: Log access summary
+        if: always()
+        run: |
+          {
+            echo "### Build logs"
+            echo "- Workflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload logs
         if: always()
