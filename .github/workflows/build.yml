@@ -49,7 +49,7 @@ jobs:
       CCACHE_NOHASHDIR: true
       CCACHE_NOINODECACHE: true
       CCACHE_SLOPPINESS: "include_file_ctime,include_file_mtime,pch_defines,time_macros"
-      BUILD_APPIMAGE: "false"
+      BUILD_APPIMAGE: "true"
       CC: /usr/bin/gcc
       CXX: /usr/bin/g++
       builddir: ${{ github.workspace }}/build/release/
@@ -209,6 +209,7 @@ jobs:
         with:
           name: FreeCAD-AppImage
           path: package/rattler-build/linux/FreeCAD*.AppImage*
+          if-no-files-found: error
 
       - name: Save Compiler Cache
         id: cache-save
